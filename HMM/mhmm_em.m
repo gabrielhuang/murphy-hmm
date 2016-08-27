@@ -37,10 +37,10 @@ if ~isempty(varargin) & ~isstr(varargin{1}) % catch old syntax
   error('optional arguments should be passed as string/value pairs')
 end
 
-[max_iter, thresh, verbose, cov_type,  adj_prior, adj_trans, adj_mix, adj_mu, adj_Sigma] = ...
+[max_iter, thresh, verbose, cov_type,  adj_prior, adj_trans, adj_mix, adj_mu, adj_Sigma, cov_prior] = ...
     process_options(varargin, 'max_iter', 10, 'thresh', 1e-4, 'verbose', 1, ...
 		    'cov_type', 'full', 'adj_prior', 1, 'adj_trans', 1, 'adj_mix', 1, ...
-		    'adj_mu', 1, 'adj_Sigma', 1);
+		    'adj_mu', 1, 'adj_Sigma', 1, 'cov_prior', []);
   
 previous_loglik = -inf;
 loglik = 0;
@@ -81,7 +81,7 @@ while (num_iter <= max_iter) & ~converged
     mixmat = mk_stochastic(postmix);
   end
   if adj_mu | adj_Sigma
-    [mu2, Sigma2] = mixgauss_Mstep(postmix, m, op, ip, 'cov_type', cov_type);
+    [mu2, Sigma2] = mixgauss_Mstep(postmix, m, op, ip, 'cov_type', cov_type, 'cov_prior', cov_prior);
     if adj_mu
       mu = reshape(mu2, [O Q M]);
     end
